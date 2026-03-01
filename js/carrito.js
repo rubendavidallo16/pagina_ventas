@@ -18,7 +18,7 @@ function renderizarCarrito() {
     // Actualizar el conteo de items en el texto
     const totalItems = carrito.reduce((acc, item) => acc + item.cantidad, 0);
     if (conteoTexto) {
-        conteoTexto.textContent = `${totalItems} items`;
+        conteoTexto.textContent = `${totalItems} productos`;
     }
 
     if (!contenedor) return;
