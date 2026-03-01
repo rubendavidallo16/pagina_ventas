@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Tienda Online - Luxe</title>
+    <!-- Tailwind CSS (desde el diseño original) -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#1152d4",
+                        "background-light": "#f6f6f8",
+                        "background-dark": "#101622",
+                    },
+                    fontFamily: {
+                        "display": ["Manrope", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <!-- Supabase CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body class="bg-background-light dark:bg-background-dark font-display text-slate-900 dark:text-slate-100 min-h-screen">
+    <div class="relative flex min-h-screen w-full flex-col">
+        <!-- Top Navigation Bar -->
+        <header
+            class="sticky top-0 z-50 w-full border-b border-slate-200 dark:border-slate-800 bg-white/80 dark:bg-background-dark/80 backdrop-blur-md px-6 md:px-10 py-3">
+            <div class="max-w-[1440px] mx-auto flex items-center justify-between gap-4">
+                <div class="flex items-center gap-2 text-primary">
+                    <div class="size-8 flex items-center justify-center bg-primary rounded-lg text-white">
+                        <span class="material-symbols-outlined">grid_view</span>
+                    </div>
+                    <h2 class="text-slate-900 dark:text-slate-100 text-xl font-extrabold leading-tight tracking-tight">
+                        <a href="index.html">LUXE</a>
+                    </h2>
+                </div>
+                <div class="flex flex-1 justify-center max-w-2xl px-4">
+                    <label class="relative w-full">
+                        <div
+                            class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-slate-400">
+                            <span class="material-symbols-outlined text-[20px]">search</span>
+                        </div>
+                        <input
+                            class="block w-full pl-10 pr-3 py-2 border-none bg-slate-100 dark:bg-slate-800 rounded-xl text-sm placeholder-slate-500 focus:ring-2 focus:ring-primary/20 transition-all"
+                            placeholder="Search products, brands, and more..." type="text" />
+                    </label>
+                </div>
+                <div class="flex items-center gap-3">
+                    <a id="profile-link" href="login.html"
+                        class="flex items-center justify-center rounded-full size-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-colors">
+                        <span class="material-symbols-outlined">person</span>
+                    </a>
+                    <a href="carrito.html"
+                        class="flex items-center justify-center rounded-full size-10 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-primary/10 hover:text-primary transition-colors relative">
+                        <span class="material-symbols-outlined">shopping_cart</span>
+                        <span id="cart-count"
+                            class="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] font-bold text-white">0</span>
+                    </a>
+                </div>
+            </div>
+        </header>
+
+        <main class="flex-1 flex flex-col md:flex-row max-w-[1440px] mx-auto w-full px-4 md:px-10 py-8 gap-8">
+            <!-- Sidebar Categories -->
+            <aside class="w-full md:w-64 shrink-0">
+                <div class="sticky top-24 space-y-8">
+                    <div>
+                        <h3 class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-4">Categories</h3>
+                        <nav class="flex flex-col gap-1" id="category-list">
+                            <!-- Categorías dinámicas o estáticas -->
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl bg-primary text-white font-semibold shadow-lg shadow-primary/20"
+                                href="#">
+                                <span class="material-symbols-outlined text-[20px]">devices</span>
+                                <span class="text-sm">Electronics</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                href="#">
+                                <span class="material-symbols-outlined text-[20px]">home</span>
+                                <span class="text-sm">Home &amp; Living</span>
+                            </a>
+                            <a class="flex items-center gap-3 px-3 py-2.5 rounded-xl text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+                                href="#">
+                                <span class="material-symbols-outlined text-[20px]">checkroom</span>
+                                <span class="text-sm">Fashion</span>
+                            </a>
+                        </nav>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Product Grid Area -->
+            <div class="flex-1">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                    <div>
+                        <h1 class="text-3xl font-extrabold tracking-tight">Our Collection</h1>
+                        <p class="text-slate-500 mt-1">Showing available products</p>
+                    </div>
+                </div>
+
+                <!-- Grid de Productos -->
+                <div id="product-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6">
+                    <!-- Los productos se cargarán dinámicamente aquí o dejaremos los del mock -->
+                    <!-- Product Card 1 Mock -->
+                    <div
+                        class="group flex flex-col bg-white dark:bg-slate-900 rounded-2xl overflow-hidden border border-slate-100 dark:border-slate-800 hover:shadow-2xl hover:shadow-primary/5 transition-all duration-300">
+                        <div class="relative aspect-square overflow-hidden bg-slate-100 dark:bg-slate-800">
+                            <div class="absolute inset-0 bg-center bg-cover transition-transform duration-500 group-hover:scale-110"
+                                style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuB3uAEXONkRp1_bROlr-IAyNVFE-G7QhBwhjxO5Yn7YpkZvowF_ebJYBwg-sOnjAwb9_FCMUDrcw26wzncc-Ge0EiZ88MgDQ4RsmaTPwPEuMW8_VFdbkFQRYp6MCg-o-gBCBP5f4-UOXdZ_obMR-rbci5O2Pz-Vp6D3_ei_3K7G8dXjwBplVeuMV7YVJdKItGxTSRIeQrEc4p7djPlJ77ERSd6NJbjRIsrE3yT8MuK1G87ctO5GzINRtpW_m8QaJrweonc4OWArz_E')">
+                            </div>
+                        </div>
+                        <div class="p-5 flex flex-col flex-1">
+                            <div class="flex justify-between items-start mb-2">
+                                <h3 class="text-lg font-bold group-hover:text-primary transition-colors">Acoustic Pro
+                                    Max</h3>
+                                <span class="text-lg font-black text-slate-900 dark:text-white">$299.00</span>
+                            </div>
+                            <p class="text-sm text-slate-500 dark:text-slate-400 mb-6 line-clamp-2">Studio-grade noise
+                                cancelling wireless headphones with 40h battery life.</p>
+                            <button
+                                class="add-to-cart-btn mt-auto w-full flex items-center justify-center gap-2 py-3 bg-slate-900 dark:bg-primary text-white rounded-xl font-bold hover:bg-primary transition-colors">
+                                <span class="material-symbols-outlined text-[20px]">add_shopping_cart</span>
+                                Add to Cart
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer
+            class="mt-20 border-t border-slate-200 dark:border-slate-800 bg-white dark:bg-background-dark py-12 px-6">
+            <div class="max-w-[1440px] mx-auto text-center text-xs text-slate-400">
+                © 2024 Luxe Tienda Online. All rights reserved.
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts de la app -->
+    <script src="js/api.js"></script>
+    <script src="js/app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const profileLink = document.getElementById('profile-link');
+            if (profileLink) {
+                const { data: { user } } = await window.supabaseClient.auth.getUser();
+                if (user) {
+                    profileLink.href = 'perfil.html';
+                } else {
+                    profileLink.href = 'login.html';
+                }
+            }
+        });
+    </script>
+</body>
+
+</html>
