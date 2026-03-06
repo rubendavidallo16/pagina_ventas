@@ -162,8 +162,8 @@ document.addEventListener('DOMContentLoaded', () => {
                     .upsert([
                         {
                             id_cliente: idClienteNum,
-                            nombre: user.user_metadata?.full_name || 'Cliente Luxe',
-                            email: user.email // O ajustarlo al nombre de columna real que tengas para correos, ej. "correo"
+                            nombres: user.user_metadata?.full_name || 'Cliente Luxe',
+                            email: user.email
                         }
                     ], { onConflict: 'id_cliente' }); // Asumimos que la llave foránea depende de un primary key id_cliente
 
