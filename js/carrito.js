@@ -116,4 +116,78 @@ function guardarYRenderizar() {
 document.addEventListener('DOMContentLoaded', () => {
     actualizarContadorCarritoHeader();
     renderizarCarrito();
+
+    // Logica de Checkout
+    const btnCheckout = document.getElementById('btn-checkout');
+    if (btnCheckout) {
+        btnCheckout.addEventListener('click', async (e) => {
+            e.preventDefault();
+            console.log("¡Botón checkout presionado!");
+
+            if (carrito.length === 0) {
+                alert("Tu carrito está vacío. ¡Agrega productos antes de pagar!");
+                return;
+            }
+
+            try {
+                // 1. Verificar si el usuario ha iniciado sesión
+                const { data: { user }, error: authError } = await window.supabaseClient.auth.getUser();
+
+                if (authError || !user) {
+                    alert("Debes iniciar sesión para poder realizar la compra.");
+                    window.location.href = "login.html";
+                    return;
+                }
+
+                // 2. Calcular el total a enviar a la BD
+                const subtotal = carrito.reduce((acc, item) => acc + item.precio * item.cantidad, 0);
+
+                btnCheckout.disabled = true;
+                btnCheckout.innerHTML = '<span class="material-symbols-outlined animate-spin">refresh</span> Procesando...';
+
+                // Generar un número entero (int4) único derivado del UUID del usuario
+                let hash = 0;
+                for (let i = 0; i < user.id.length; i++) {
+                    hash = ((hash << 5) - hash) + user.id.charCodeAt(i);
+                    hash = hash & hash; // Convertir a 32bit integer
+                }
+                const idClienteNum = Math.abs(hash);
+
+                console.log("Intentando insertar en Supabase...", { idClienteNum, subtotal });
+
+                // 4. Insertar la compra en la tabla "venta"
+                const { error: dbError } = await window.supabaseClient
+                    .from('venta')
+                    .insert([
+                        {
+                            id_cliente: idClienteNum,
+                            total: subtotal,
+                            estado: "Pendiente",
+                            metodo_pago: "Tarjeta"
+                        }
+                    ]);
+
+                if (dbError) {
+                    console.error("Error exacto de Supabase:", dbError);
+                    throw dbError;
+                }
+
+                // 5. Compra Exitosa: Limpiamos carrito
+                localStorage.removeItem('carrito');
+                carrito = [];
+                renderizarCarrito();
+                actualizarContadorCarritoHeader();
+
+                alert("¡Compra registrada con éxito! Tus productos están en camino.");
+                window.location.href = "index.html";
+
+            } catch (err) {
+                console.error("Error crítico procesando pago:", err);
+                alert("Hubo un error al registrar la venta. Por favor, abre la consola (F12) para ver el error exacto: " + (err.message || err.details || ""));
+            } finally {
+                btnCheckout.disabled = false;
+                btnCheckout.innerHTML = '<span class="material-symbols-outlined">lock</span> Proceder al Pago';
+            }
+        });
+    }
 });
