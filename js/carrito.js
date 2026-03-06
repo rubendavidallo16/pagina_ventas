@@ -162,8 +162,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     .upsert([
                         {
                             id_cliente: idClienteNum,
-                            nombres: user.user_metadata?.full_name || 'Cliente Luxe',
-                            email: user.email
+                            nombres: user.user_metadata?.full_name || 'Cliente',
+                            apellidos: 'Luxe',
+                            email: user.email,
+                            telefono: '000000000',
+                            direccion: 'Sin especificar',
+                            documento: '00000000',
+                            estado: true
                         }
                     ], { onConflict: 'id_cliente' }); // Asumimos que la llave foránea depende de un primary key id_cliente
 
