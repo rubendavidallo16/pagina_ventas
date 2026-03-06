@@ -155,6 +155,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
                 console.log("Intentando insertar en Supabase...", { idClienteNum, subtotal });
 
+                // 3.5. Insertar/Actualizar el cliente en la tabla `cliente` para evitar el error de llave foránea (Foreign Key).
+                // Aseguramos que el id_cliente exista en la tabla maestro de clientes antes de registrar la venta.
+                const { error: clienteError } = await window.supabaseClient
+                    .from('cliente')
+                    .upsert([
+                        {
+                            id_cliente: idClienteNum,
+                            nombre: user.user_metadata?.full_name || 'Cliente Luxe',
+                            email: user.email // O ajustarlo al nombre de columna real que tengas para correos, ej. "correo"
+                        }
+                    ], { onConflict: 'id_cliente' }); // Asumimos que la llave foránea depende de un primary key id_cliente
+
+                if (clienteError) {
+                    console.log("Aviso: No se pudo verificar o asegurar el cliente en la tabla cliente. Es posible que el nombre de columna sea distinto.", clienteError);
+                    // No tiramos error para intentar continuar, a veces el usuario ya lo registró manualmente o las políticas RLS bloquean el UPSERT pero permiten ventas.
+                    // Opcionalmente podrías tirar throw clienteError; si quieres ser estricto.
+                }
+
                 // 4. Insertar la compra en la tabla "venta"
                 const { error: dbError } = await window.supabaseClient
                     .from('venta')
