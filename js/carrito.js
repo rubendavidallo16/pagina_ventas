@@ -125,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.log("¡Botón checkout presionado!");
 
             if (carrito.length === 0) {
-                alert("Tu carrito está vacío. ¡Agrega productos antes de pagar!");
+                window.mostrarToast("Tu carrito está vacío. ¡Agrega productos antes de pagar!", "error");
                 return;
             }
 
@@ -134,8 +134,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const { data: { user }, error: authError } = await window.supabaseClient.auth.getUser();
 
                 if (authError || !user) {
-                    alert("Debes iniciar sesión para poder realizar la compra.");
-                    window.location.href = "login.html";
+                    window.mostrarToast("Debes iniciar sesión para poder realizar la compra.", "error");
+                    setTimeout(() => window.location.href = "login.html", 1500);
                     return;
                 }
 
@@ -201,12 +201,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 renderizarCarrito();
                 actualizarContadorCarritoHeader();
 
-                alert("¡Compra registrada con éxito! Tus productos están en camino.");
-                window.location.href = "index.html";
+                window.mostrarToast("¡Compra registrada con éxito! Tus productos están en camino.", "success");
+                setTimeout(() => window.location.href = "index.html", 2000); // Redirigir al home tras 2s
 
             } catch (err) {
                 console.error("Error crítico procesando pago:", err);
-                alert("Hubo un error al registrar la venta. Por favor, abre la consola (F12) para ver el error exacto: " + (err.message || err.details || ""));
+                window.mostrarToast("Hubo un error al registrar la venta. Por favor, revisa la consola (F12).", "error");
             } finally {
                 btnCheckout.disabled = false;
                 btnCheckout.innerHTML = '<span class="material-symbols-outlined">lock</span> Proceder al Pago';

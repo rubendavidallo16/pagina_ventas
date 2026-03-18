@@ -214,8 +214,8 @@ function agregarAlCarrito(producto) {
     localStorage.setItem('carrito', JSON.stringify(carrito));
     actualizarContadorCarrito();
 
-    // Opcional: Mostrar una notificación pequeña (toast)
-    alert(`¡${producto.nombre || producto.title || 'Producto'} agregado al carrito!`);
+    // Mostrar notificación pequeña tipo toast en la esquina inferior derecha
+    mostrarToast(`¡${producto.nombre || producto.title || 'Producto'} agregado al carrito!`, 'success');
 }
 
 // Inicializar la página de inicio
